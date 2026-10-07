@@ -53,15 +53,15 @@ function App() {
       const place = geoData.results[0]
 
       const weatherRes = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7`
+        `https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=8`
       )
       const weatherData = await weatherRes.json()
 
-      const forecast = (weatherData.daily?.time ?? []).map((date: string, index: number) => ({
+      const forecast = (weatherData.daily?.time ?? []).slice(1, 8).map((date: string, index: number) => ({
         day: new Date(date).toLocaleDateString('en-US', { weekday: 'short' }),
-        code: weatherData.daily.weather_code[index],
-        maxTemp: weatherData.daily.temperature_2m_max[index],
-        minTemp: weatherData.daily.temperature_2m_min[index],
+        code: weatherData.daily.weather_code[index + 1],
+        maxTemp: weatherData.daily.temperature_2m_max[index + 1],
+        minTemp: weatherData.daily.temperature_2m_min[index + 1],
       }))
 
       setWeather({
