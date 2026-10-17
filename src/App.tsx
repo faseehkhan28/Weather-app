@@ -34,12 +34,6 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const backgroundLocation = weather
-    ? `${weather.city} ${weather.country || 'landmark'}`.trim()
-    : 'world skyline'
-
-  const pageBackground = `url("https://source.unsplash.com/1600x900/?${encodeURIComponent(backgroundLocation)}")`
-
   async function handleSearch() {
     if (!city.trim()) return
     setLoading(true)
@@ -123,14 +117,7 @@ function App() {
   }
 
   return (
-    <div
-      className="flex min-h-screen items-center justify-center bg-slate-900 p-4"
-      style={{
-        backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.74), rgba(15, 23, 42, 0.74)), ${pageBackground}`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
+    <div className="flex min-h-screen items-center justify-center bg-slate-900 p-4">
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-800/85 p-6 shadow-2xl backdrop-blur-sm">
         <h1 className="mb-4 text-center text-2xl font-bold text-sky-400">
           Weather App
