@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { GeolocationButton } from './components/GeolocationButton'
 
 type Weather = {
   city: string
@@ -66,6 +67,33 @@ function App() {
     }
   }
 
+  async function fetchWeatherByCoords(latitude: number, longitude: number) {
+    setLoading(true)
+    setError('')
+    setWeather(null)
+
+    try {
+      const weatherRes = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code`
+      )
+      if (!weatherRes.ok) throw new Error('Weather request failed')
+      const weatherData = await weatherRes.json()
+
+      setWeather({
+        city: 'Your location',
+        country: '',
+        temperature: weatherData.current.temperature_2m,
+        humidity: weatherData.current.relative_humidity_2m,
+        wind: weatherData.current.wind_speed_10m,
+        code: weatherData.current.weather_code,
+      })
+    } catch {
+      setError('Could not load weather for your location. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-900 p-4">
       <div className="w-full max-w-sm rounded-2xl bg-slate-800 p-6 shadow-xl">
@@ -89,13 +117,15 @@ function App() {
           </button>
         </div>
 
+        <GeolocationButton fetchWeatherByCoords={fetchWeatherByCoords} />
+
         {loading && <p className="mt-6 text-center text-slate-300">Loading...</p>}
         {error && <p className="mt-6 text-center text-red-400">{error}</p>}
 
         {weather && (
           <div className="mt-6 text-center text-white">
             <h2 className="text-xl font-semibold">
-              {weather.city}, {weather.country}
+              {weather.country ? `${weather.city}, ${weather.country}` : weather.city}
             </h2>
             <p className="my-2 text-6xl font-bold">{weather.temperature}°C</p>
             <p className="text-lg text-sky-300">{describe(weather.code)}</p>
